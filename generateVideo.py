@@ -347,7 +347,7 @@ if __name__ == "__main__":
 
         print(outputVideoFile)
 
-    except Exception, e:
+    except Exception as e:
         print("ERROR - Something went wrong", e)
     else:
         print("OK")
