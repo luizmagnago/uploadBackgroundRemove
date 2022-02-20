@@ -175,7 +175,7 @@ def generateVideo(image_green, background_video, logo_image_file, rbg_chroma_key
 
     
 
-    fourcc = cv2.VideoWriter_fourcc(*'X264')
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
     outputVideoWriter = cv2.VideoWriter(outputVideoFile, fourcc, fps, (outputVideoWidth,outputVideoHeight))
 
