@@ -3,11 +3,9 @@
 
    $call = '/usr/bin/python2.7 generateVideo.py --input '. $filename;
 
-   // ob_start();
-   // passthru($call);
-   // $output = ob_get_clean(); 
-
-   $output = shell_exec($call);
+   ob_start();
+   passthru($call);
+   $output = ob_get_clean(); 
 
 
    if (strpos($output, 'ERROR') !== false) {

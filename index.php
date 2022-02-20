@@ -400,6 +400,8 @@
             data: {filename: mySubString},
             success:function(result){
 
+				console.log(result)
+
 				if (result.abc == "ERROR") {
 					_("status-"+num).innerHTML = _("status-"+num).innerHTML + "<br/>Error on video processing!!!";
 				}
