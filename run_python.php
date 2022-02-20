@@ -5,12 +5,10 @@
 
    ob_start();
    passthru($call);
-   $output = ob_get_clean(); 
-
+   $output = ob_get_clean();
 
    if (strpos($output, 'ERROR') !== false) {
-      echo json_encode(array("abc"=>"ERROR"));
-      
+      echo json_encode(array("abc"=>"ERROR"));  
    }
    else {
       echo json_encode(array("abc"=>$filename));

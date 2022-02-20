@@ -415,10 +415,35 @@
 
 					let videoPath = "videoOut/" + fileNoExt + ".mp4"
 
-					let ahref = "<a href='" + videoPath + "'>" + fileNoExt + ".mp4" + "</a>";
+					let videoPathOut = "videoOut/" + fileNoExt + "_.mp4"
+
+					//
+					$.ajax({
+					url:"run_ffmpeg.php",    //the page containing php script
+					type: "post",    //request type,
+					dataType: 'json',
+					data: {filename: videoPath, filenameOut: videoPathOut},
+					success:function(result){
+
+						console.log(result)
+
+						console.log(videoPathOut)
+
+						console.log(fileNoExt)
 
 
-					_("status-"+num).innerHTML = _("status-"+num).innerHTML + "<br/>Video Download: " + ahref;
+						let ahref = "<a href='" + videoPathOut + "'>" + fileNoExt + "_.mp4" + "</a>";
+
+
+						console.log(ahref)
+
+
+						_("status-"+num).innerHTML = _("status-"+num).innerHTML + "<br/>Video Download: " + ahref;
+
+						}
+					});
+
+					
 				}
 
 
