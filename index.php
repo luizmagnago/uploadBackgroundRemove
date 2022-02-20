@@ -191,6 +191,7 @@
 
 				if (result.abc == "ERROR") {
 					_("status-"+num).innerHTML = _("status-"+num).innerHTML + "<br/>Error on video processing!!!";
+					document.getElementById("videoProgress").style.display = 'none';
 				}
 				else {
 					let ret = result.abc;
@@ -227,10 +228,12 @@
 
 						_("status-"+num).innerHTML = _("status-"+num).innerHTML + "<br/>Video Download: " + ahref;
 
+						document.getElementById("videoProgress").style.display = 'none';
+
 						}
 					});
 
-					document.getElementById("videoProgress").style.display = 'none';
+					
 
 					
 				}
