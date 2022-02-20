@@ -115,9 +115,39 @@ def generateVideo(image_green, background_video, logo_image_file, rbg_chroma_key
 
     imageGreenCv = cv2.imread(image_green)
 
+    #imageGreenCv = cv2.resize(imageGreenCv, (outputVideoWidth,outputVideoHeight))
+
+    
+
+    height, width, channels = imageGreenCv.shape
+
+    # Create a black image
+    removeSide = 0
+    removeVertical = 0
+    new_h = height
+    new_w = width
+    if (height < width):
+        removeSide = 1
+        new_h = height
+        new_w = new_h
+    elif (height > width):
+        removeVertical = 1
+        new_h = width
+        new_w = new_h
+
+    if (removeSide):
+        side = int((width - new_w)/2)
+        imageGreenCv = imageGreenCv[0:new_h,side:width-side]
+
+    if (removeVertical):
+        top = int((height - new_h)/2)
+        imageGreenCv = imageGreenCv[top:height-top,0:new_w]
+
+
     imageGreenCv = cv2.resize(imageGreenCv, (outputVideoWidth,outputVideoHeight))
 
     imageTopLayer = cv2.imread(logo_image_file)
+
 
     #imageGreenCv = cv2.blur(imageGreenCv,(15,15))
 
