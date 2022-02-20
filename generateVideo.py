@@ -115,6 +115,8 @@ def generateVideo(image_green, background_video, logo_image_file, rbg_chroma_key
 
     imageGreenCv = cv2.imread(image_green)
 
+    imageGreenCv = cv2.resize(imageGreenCv, (outputVideoWidth,outputVideoHeight))
+
     imageTopLayer = cv2.imread(logo_image_file)
 
     #imageGreenCv = cv2.blur(imageGreenCv,(15,15))
