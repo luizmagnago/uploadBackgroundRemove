@@ -6,6 +6,9 @@ import time
 import argparse
 import os
 import json
+import timeit
+
+
 
 def generate_hsv_range_from_rgb_color(rgb_color):
 
@@ -80,6 +83,64 @@ def generate_hsv_range_from_rgb_color(rgb_color):
 
     return lower_hsv_bound, upper_hsv_bound
 
+# works but its really slow
+def transparentOverlay2(src , overlay , pos=(0,0),scale = 1):
+    """
+    :param src: Input Color Background Image
+    :param overlay: transparent Image (BGRA)
+    :param pos:  position where the image to be blit.
+    :param scale : scale factor of transparent image.
+    :return: Resultant Image
+    """
+    overlay = cv2.resize(overlay,(0,0),fx=scale,fy=scale)
+    h,w,_ = overlay.shape  # Size of foreground
+    rows,cols,_ = src.shape  # Size of background Image
+    y,x = pos[0],pos[1]    # Position of foreground/overlay image
+    
+    #loop over all pixels and apply the blending equation
+    for i in range(h):
+        for j in range(w):
+            if x+i >= rows or y+j >= cols:
+                continue
+            alpha = float(overlay[i][j][3]/255.0) # read the alpha channel 
+            src[x+i][y+j] = alpha*overlay[i][j][:3]+(1-alpha)*src[x+i][y+j]
+    return src
+
+def transparentOverlay(background, overlay, x=0, y=0):
+
+    background_width = background.shape[1]
+    background_height = background.shape[0]
+
+    if x >= background_width or y >= background_height:
+        return background
+
+    h, w = overlay.shape[0], overlay.shape[1]
+
+    if x + w > background_width:
+        w = background_width - x
+        overlay = overlay[:, :w]
+
+    if y + h > background_height:
+        h = background_height - y
+        overlay = overlay[:h]
+
+    if overlay.shape[2] < 4:
+        overlay = np.concatenate(
+            [
+                overlay,
+                np.ones((overlay.shape[0], overlay.shape[1], 1), dtype = overlay.dtype) * 255
+            ],
+            axis = 2,
+        )
+
+    overlay_image = overlay[..., :3]
+    mask = overlay[..., 3:] / 255.0
+
+    background[y:y+h, x:x+w] = (1.0 - mask) * background[y:y+h, x:x+w] + mask * overlay_image
+
+    return background
+
+
 def rgbArrayToBgrArray(rgb_input):
 
     rgb_color = np.uint8([[rgb_input]])
@@ -146,7 +207,7 @@ def generateVideo(image_green, background_video, logo_image_file, rbg_chroma_key
 
     imageGreenCv = cv2.resize(imageGreenCv, (outputVideoWidth,outputVideoHeight))
 
-    imageTopLayer = cv2.imread(logo_image_file)
+    imageTopLayer = cv2.imread(logo_image_file, cv2.IMREAD_UNCHANGED)
 
 
     #imageGreenCv = cv2.blur(imageGreenCv,(15,15))
@@ -204,44 +265,20 @@ def generateVideo(image_green, background_video, logo_image_file, rbg_chroma_key
 
             backgroundframe = cv2.resize(backgroundframe, (outputVideoWidth,outputVideoHeight))
 
-            width = int(backgroundframe.shape[1])
-            height = int(backgroundframe.shape[0])
-            dim = (width, height)
-            # resize image
-
-
             backgroundTest = cv2.bitwise_and(backgroundframe,backgroundframe, mask=maskTest)
-
-
-            imageTopLayerGrey = cv2.cvtColor(imageTopLayer, cv2.COLOR_BGR2GRAY)
-
-            imageTopLayerBin = cv2.threshold(imageTopLayerGrey, 0, 255, cv2.THRESH_BINARY_INV)[1]
-
 
 
             imageOut = backgroundTest + background_part
 
 
-
-            image1 = cv2.bitwise_and(imageOut,imageOut, mask=imageTopLayerBin)
-
-
-
-
-            imageTopLayerBinInv = cv2.bitwise_not(imageTopLayerBin)
-
-
-            image2 = cv2.bitwise_and(imageTopLayer,imageTopLayer, mask=imageTopLayerBinInv)
-
-
-            imageOut = image1 + image2
+            imageOut = transparentOverlay(imageOut, imageTopLayer)
 
 
             outputVideoWriter.write(imageOut)
 
             # Press Q on keyboard to  exit
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            # if cv2.waitKey(1) & 0xFF == ord('q'):
+            #     break
 
         else:
             break

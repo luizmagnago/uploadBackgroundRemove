@@ -1,0 +1,10 @@
+ssh -i FlayAdeal.pem ec2-user@ec2-18-208-167-91.compute-1.amazonaws.com
+
+pip install opencv-python==4.2.0.32
+
+
+
+ssh root@143.198.167.138
+1Q2w3e4r
+
+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

@@ -39,9 +39,18 @@
 				
 				</div>
 
-				<div id=videoProgress class="spinner spinner-md" style="display:inline;" ></div>
+				
 			</form>
 			
+			<form method="POST" id="send_email" style="display:none;">
+			<input type="email" required id="email"/> 
+			<button type="button" value="Send" class="submit" id="send_email_submit">Send Email</button>
+			<div id="spass">
+			
+				</div>
+			</form>
+			<div id=videoProgress class="spinner spinner-md" style="display:inline;" ></div>
+		
 			
 
 			<!-- <div class="credit">
@@ -53,8 +62,13 @@
 	<!-- <script src="app.js"></script> -->
 
 	<script>
+	var outputfile = null;
+
+	
 
 		document.getElementById("videoProgress").style.display = 'none';
+		document.getElementById("send_email").style.display = 'none';
+		
 
 		// Files Counter
 		(function (document, window, index) {
@@ -178,7 +192,7 @@
     		res.lastIndexOf("'")
 		);
 
-		document.getElementById("videoProgress").style.display = 'inline';
+		document.getElementById("videoProgress").style.display = 'table';
 
 		$.ajax({
             url:"run_python.php",    //the page containing php script
@@ -206,6 +220,7 @@
 					let videoPathOut = "videoOut/" + fileNoExt + "_.mp4"
 
 					//
+					outputfile = null;
 					$.ajax({
 					url:"run_ffmpeg.php",    //the page containing php script
 					type: "post",    //request type,
@@ -229,6 +244,8 @@
 						_("status-"+num).innerHTML = _("status-"+num).innerHTML + "<br/>Video Download: " + ahref;
 
 						document.getElementById("videoProgress").style.display = 'none';
+						document.getElementById("send_email").style.display = 'table';
+						outputfile = fileNoExt + "_.mp4";
 
 						}
 					});
@@ -243,6 +260,27 @@
             }
         });
 	}
+	
+	document.getElementById("send_email_submit").addEventListener("click", function () {	
+		email = document.getElementById("email").value
+		document.getElementById("videoProgress").style.display = 'table';
+		$.ajax({
+		    type: 'POST',
+		    url: "send_email.php",
+		    dataType: 'json',
+		    data: {'outputfile' : outputfile, 'email' : email},
+		    success: function (data) {
+		    console.log(data)
+		    if (data.success) {
+		    $("#spass").html("Send Succesfully");
+		    } else {
+		    $("#spass").html("Error while Sending Email, Please try again");
+		    }
+		    
+		    document.getElementById("videoProgress").style.display = 'none';
+		    }
+		});
+	});
 
 	function errorHandler(num,event) {
 	    $("#progress-bar-sh-"+num).css({ display: "none" });

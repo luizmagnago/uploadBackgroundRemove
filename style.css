@@ -133,6 +133,26 @@ a:hover {
     width: 70%;
 }
 
+#send_email {
+	min-height: auto !important;
+	display:table;
+	width:100% !important;
+	margin-bottom: 10px;
+}
+#send_email .submit{
+	margin : 0px 5px !important;
+}
+#send_email input{
+	height: 36px;
+	width:70% !important;
+}
+
+#send_email #spass{
+	margin: 15px;
+	color: #ffffff;
+}
+
+
 @-webkit-keyframes progress-bar-stripes {
     from {
         background-position: 40px 0;
