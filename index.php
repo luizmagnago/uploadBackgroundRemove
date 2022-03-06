@@ -22,11 +22,26 @@
 			<h1 class="title">File uploader</h1>
 
 			<form method="POST" id="upload_form" enctype="multipart/form-data">
+
+				<label class="title" for="city_list">Choose City Background:</label>
+				<div class="title">
+					<select name="city_list" id="city_list">
+						<option value="aux_files/cairo1.mp4" selected>Cairo</option>
+						<option value="aux_files/dubai.mp4" >Dubai</option>
+						<option value="aux_files/jeddah.mp4" >Jeddah</option>
+						<option value="aux_files/madina.mp4" >Madina</option>
+						<option value="aux_files/riyadh.mp4" >Riyadh</option>
+						<option value="aux_files/taif.mp4" >Taif</option>
+					</select>
+				</div>
+
+				<br>
+
 				<span class="label">tap the plus icon to choose file</span>
-				<input type="file" name="file[]" id="file" class="file" data-multiple-caption="{count} files are selected" multiple>
+				<input type="file" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" name="file[]" id="file" class="file" data-multiple-caption="{count} files are selected">
 
 				<label for="file" class="file" >
-					<span class="block white">No file is chosen</span>
+					<span id="filename_" class="block white">No file is chosen</span>
 					<i class="fas fa-plus-circle fa-2x"></i>
 				</label>
 
@@ -63,7 +78,6 @@
 
 	<script>
 	var outputfile = null;
-
 	
 
 		document.getElementById("videoProgress").style.display = 'none';
@@ -85,10 +99,14 @@
 					else
 						fileName = e.target.value.split('\\').pop();
 
-					if (fileName)
-						label.querySelector('span').innerHTML = fileName;
-					else
-						label.innerHTML = labelVal;
+					if (fileName) {
+						// label.querySelector('span').innerHTML = fileName;
+						document.getElementById("filename_").textContent = fileName;
+					}
+					else {
+						document.getElementById("filename_").textContent = 'No file is chosen';
+						//label.innerHTML = labelVal;
+					}
 				});
 
 				// Firefox bug fix
@@ -183,8 +201,6 @@
 		_("status-"+num).innerHTML = event.target.responseText;
 		// _("progressBar").value = 0;
 
-		// console.log(num)
-
 		var res = event.currentTarget.response;
 
 		var mySubString = res.substring(
@@ -192,18 +208,24 @@
     		res.lastIndexOf("'")
 		);
 
+		var select = document.getElementById('city_list');
+		var background_video_name = select.options[select.selectedIndex].value;
+
 		document.getElementById("videoProgress").style.display = 'table';
 
 		$.ajax({
             url:"run_python.php",    //the page containing php script
             type: "post",    //request type,
             dataType: 'json',
-            data: {filename: mySubString},
+            data: {filename: mySubString, background_video: background_video_name},
             success:function(result){
 
-				console.log(result)
+				console.log("Runned python script")
 
-				if (result.abc == "ERROR") {
+				let resIncludes = result.abc.includes("ERROR");
+
+				if (resIncludes == true) {
+					console.log("Error: ", result.abc)
 					_("status-"+num).innerHTML = _("status-"+num).innerHTML + "<br/>Error on video processing!!!";
 					document.getElementById("videoProgress").style.display = 'none';
 				}
@@ -228,17 +250,19 @@
 					data: {filename: videoPath, filenameOut: videoPathOut},
 					success:function(result){
 
-						console.log(result)
+						console.log("Running ffmpeg")
 
-						console.log(videoPathOut)
+						// console.log(result)
 
-						console.log(fileNoExt)
+						// console.log(videoPathOut)
+
+						// console.log(fileNoExt)
 
 
 						let ahref = "<a href='" + videoPathOut + "'>" + fileNoExt + "_.mp4" + "</a>";
 
 
-						console.log(ahref)
+						// console.log(ahref)
 
 
 						_("status-"+num).innerHTML = _("status-"+num).innerHTML + "<br/>Video Download: " + ahref;
@@ -270,7 +294,7 @@
 		    dataType: 'json',
 		    data: {'outputfile' : outputfile, 'email' : email},
 		    success: function (data) {
-		    console.log(data)
+		    // console.log(data)
 		    if (data.success) {
 		    $("#spass").html("Send Succesfully");
 		    } else {

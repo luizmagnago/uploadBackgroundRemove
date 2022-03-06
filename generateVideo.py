@@ -21,8 +21,6 @@ def generate_hsv_range_from_rgb_color(rgb_color):
     S = hsv_color[1]
     V = hsv_color[2]
 
-    print("teste: ", H, S, V)
-
     Hmax = H + 15
     Hmin = H - 15
 
@@ -291,11 +289,19 @@ if __name__ == "__main__":
 
         parser = argparse.ArgumentParser(description='Background replace program')
         parser.add_argument('-i','--input', help='Input Png File', required=True)
-        # parser.add_argument('-o','--output', help='Output Video File', required=True)
+        parser.add_argument('-b','--background_video', help='Input background video', required=True)
         args = vars(parser.parse_args())
 
         inputFile = args['input']
+
+        background_video = args['background_video']
         
+        if (os.path.isfile(background_video)):
+            print("Input Background Video File: ", background_video)
+        else:
+            print("Invalid Background Video File", background_video)
+            exit()
+
         if (os.path.isfile(inputFile)):
             print("Input File: ", inputFile)
         else:
@@ -304,7 +310,7 @@ if __name__ == "__main__":
 
         rbg_chroma_key_color = [94, 185, 129]
 
-        background_video = "aux_files/backgroundvideo.mp4"
+        #background_video = "aux_files/backgroundvideo.mp4"
         top_layer = "aux_files/toplayer.png"
 
 
