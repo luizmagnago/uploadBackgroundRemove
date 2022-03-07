@@ -76,6 +76,14 @@ def generate_hsv_range_from_rgb_color(rgb_color):
     Vmax = 255
     Vmin = 70
 
+    Smax = 110
+    Smin = 65
+    Vmax = 255
+    Vmin = 0
+
+    Hmin = 0
+    Hmax = 255
+
     lower_hsv_bound = (int(Hmin),int(Smin),int(Vmin))
     upper_hsv_bound = (int(Hmax),int(Smax),int(Vmax))
 
@@ -217,7 +225,7 @@ def generateVideo(image_green, background_video, logo_image_file, rbg_chroma_key
     # print(upper_hsv_bound)
 
     # Convert BGR to HSV
-    hsv = cv2.cvtColor(imageGreenCv, cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(imageGreenCv, cv2.COLOR_BGR2LAB)
 
     # Threshold the HSV image to get only green colors
     mask = cv2.inRange(hsv, lower_hsv_bound , upper_hsv_bound)
